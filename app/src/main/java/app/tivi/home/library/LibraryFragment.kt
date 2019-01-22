@@ -38,7 +38,6 @@ import app.tivi.ui.epoxy.EmptyEpoxyController
 import app.tivi.ui.glide.GlideApp
 import app.tivi.ui.glide.asGlideTarget
 import app.tivi.util.GridToGridTransitioner
-import app.tivi.util.TiviDateFormatter
 import app.tivi.util.TiviMvRxFragment
 import com.airbnb.epoxy.EpoxyController
 import com.airbnb.mvrx.fragmentViewModel
@@ -51,12 +50,11 @@ class LibraryFragment : TiviMvRxFragment() {
 
     private lateinit var binding: FragmentLibraryBinding
 
-    private lateinit var textCreator: LibraryTextCreator
-
     private val viewModel: LibraryViewModel by fragmentViewModel()
     @Inject lateinit var libraryViewModelFactory: LibraryViewModel.Factory
 
-    @Inject lateinit var dateFormatter: TiviDateFormatter
+    @Inject lateinit var followedControllerFactory: LibraryFollowedEpoxyController.Factory
+    @Inject lateinit var watchedControllerFactory: LibraryWatchedEpoxyController.Factory
 
     private val listItemSharedElementHelper by lazy(LazyThreadSafetyMode.NONE) {
         ListItemSharedElementHelper(binding.libraryRv) { it.findViewById(R.id.show_poster) }
@@ -93,8 +91,6 @@ class LibraryFragment : TiviMvRxFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         postponeEnterTransition()
-
-        textCreator = LibraryTextCreator(requireContext())
 
         view.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 
@@ -188,23 +184,23 @@ class LibraryFragment : TiviMvRxFragment() {
         binding.libraryMotion.transitionToStart()
     }
 
-    private fun createWatchedController() = LibraryWatchedEpoxyController(
+    private fun createWatchedController() = watchedControllerFactory.create(
             object : LibraryWatchedEpoxyController.Callbacks {
                 override fun onItemClicked(item: WatchedShowEntryWithShow) {
                     viewModel.onItemPostedClicked(homeNavigator, item.show,
                             listItemSharedElementHelper.createForItem(item, "poster")
                     )
                 }
-            }, textCreator, dateFormatter)
+            })
 
-    private fun createFollowedController() = LibraryFollowedEpoxyController(
+    private fun createFollowedController() = followedControllerFactory.create(
             object : LibraryFollowedEpoxyController.Callbacks {
                 override fun onItemClicked(item: FollowedShowEntryWithShow) {
                     viewModel.onItemPostedClicked(homeNavigator, item.show,
                             listItemSharedElementHelper.createForItem(item, "poster")
                     )
                 }
-            }, textCreator)
+            })
 
     private fun onMenuItemClicked(item: MenuItem) = when (item.itemId) {
         R.id.home_menu_user_avatar -> {

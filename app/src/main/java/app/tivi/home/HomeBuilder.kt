@@ -35,6 +35,7 @@ internal abstract class HomeBuilder {
     @ContributesAndroidInjector(modules = [
         ViewModelBuilder::class,
         HomeModule::class,
+        HomeModuleBinds::class,
         DiscoverBuilder::class,
         TrendingBuilder::class,
         PopularBuilder::class,

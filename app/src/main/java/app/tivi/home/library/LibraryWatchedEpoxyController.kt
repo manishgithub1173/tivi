@@ -26,9 +26,11 @@ import app.tivi.ui.epoxy.TotalSpanOverride
 import app.tivi.util.TiviDateFormatter
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.paging.PagedListEpoxyController
+import com.squareup.inject.assisted.Assisted
+import com.squareup.inject.assisted.AssistedInject
 
-class LibraryWatchedEpoxyController(
-    private val callbacks: Callbacks,
+class LibraryWatchedEpoxyController @AssistedInject constructor(
+    @Assisted private val callbacks: Callbacks,
     private val textCreator: LibraryTextCreator,
     private val dateFormatter: TiviDateFormatter
 ) : PagedListEpoxyController<WatchedShowEntryWithShow>() {
@@ -68,5 +70,10 @@ class LibraryWatchedEpoxyController(
 
     interface Callbacks {
         fun onItemClicked(item: WatchedShowEntryWithShow)
+    }
+
+    @AssistedInject.Factory
+    interface Factory {
+        fun create(callbacks: Callbacks): LibraryWatchedEpoxyController
     }
 }

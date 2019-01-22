@@ -25,9 +25,11 @@ import app.tivi.ui.epoxy.EpoxyModelProperty
 import app.tivi.ui.epoxy.TotalSpanOverride
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.paging.PagedListEpoxyController
+import com.squareup.inject.assisted.Assisted
+import com.squareup.inject.assisted.AssistedInject
 
-class LibraryFollowedEpoxyController(
-    private val callbacks: Callbacks,
+class LibraryFollowedEpoxyController @AssistedInject constructor(
+    @Assisted private val callbacks: Callbacks,
     private val textCreator: LibraryTextCreator
 ) : PagedListEpoxyController<FollowedShowEntryWithShow>() {
     var tmdbImageUrlProvider by EpoxyModelProperty { TmdbImageUrlProvider() }
@@ -66,4 +68,10 @@ class LibraryFollowedEpoxyController(
     interface Callbacks {
         fun onItemClicked(item: FollowedShowEntryWithShow)
     }
+
+    @AssistedInject.Factory
+    interface Factory {
+        fun create(callbacks: Callbacks): LibraryFollowedEpoxyController
+    }
 }
+
